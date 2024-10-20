@@ -2,19 +2,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 class DataInspection:
-    def __init__(self, df=None):
-        """Initialize the class with a DataFrame."""
-        self.df = df
+    def __init__(self):
+        self.df = None
+
+    def load_csv(self, file_path):
+        """Load a CSV file into a DataFrame."""
+        self.df = pd.read_csv(file_path)
 
     def handle_missing_values(self, column_name):
         """Handle missing values based on column type."""
         missing_count = self.df[column_name].isna().sum()
         if missing_count < len(self.df) * 0.5:
+            # Fill with mean or mode
             if pd.api.types.is_numeric_dtype(self.df[column_name]):
                 self.df[column_name].fillna(self.df[column_name].mean(), inplace=True)
             else:
                 self.df[column_name].fillna(self.df[column_name].mode()[0], inplace=True)
         else:
+            # Drop column
             self.df.drop(column_name, axis=1, inplace=True)
 
     def check_data_types(self, column_name):

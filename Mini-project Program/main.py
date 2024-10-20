@@ -43,8 +43,9 @@ def perform_analysis(data, dataset_path):
                         exit()
                     elif 1 <= selected <= len(numeric_columns):
                         variable = numeric_columns[selected - 1]
-                        # Plot the selected variable's distribution
-                        inspector = gex2.DataInspection(dataset_path)
+                        # Create an instance of DataInspection and load data
+                        inspector = gex2.DataInspection()
+                        inspector.df = data  # Assign the dataframe directly
                         inspector.plot_histogram(variable)
                     else:
                         print("Invalid choice. Please enter a valid option.")
@@ -159,14 +160,14 @@ def perform_anova(data, continuous_var, categorical_var):
 # Function to perform Kruskal-Wallis Test
 def perform_kruskal_wallis_test(data, continuous_var, categorical_var):
     print(f"Performing Kruskal-Wallis Test on {continuous_var} and {categorical_var}...")
-    
+
     groups = data[categorical_var].unique()
     group_data = [data[data[categorical_var] == group][continuous_var] for group in groups]
-    
+
     # Perform Kruskal-Wallis Test
     stat, p = stats.kruskal(*group_data)
     print(f'Kruskal-Wallis Test: statistic={stat}, p-value={p}')
-    
+
     if p < 0.05:
         print(f"There is a statistically significant difference between the groups for {continuous_var} (p < 0.05).")
     else:
